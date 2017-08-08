@@ -52,9 +52,15 @@ class AmigaGenerator(Generator):
             if not os.path.exists(whdlDir) or not os.path.isdir(whdlDir):
                 sys.exit("No WHDLoad folder <"+whdlDir+"> corresponding to your uae file "+  romFolder+"/"+uaeName)
             
-            whdlGenerator.generateWHDL(rom,romFolder,uaeName,system.name)
+            whdlGenerator.generateWHDL(rom,romFolder,gameName,system.name)
             
-        
+            # mandatory change of current working dir to uae4arm's one
+            os.chdir(uae4armPath)
+            print("Executing uae4arm -f %s in %s" %(os.path.join(mountPoint,uaeName),os.getcwd()))
+            os.popen('./uae4arm -f "'+os.path.join(mountPoint,uaeName)+'"')
+            
+            whdlGenerator.handleBackup(rom,romFolder,gameName,system.name)
+            
         sys.exit()
         # Find rom path
 #        gameDir = rom
