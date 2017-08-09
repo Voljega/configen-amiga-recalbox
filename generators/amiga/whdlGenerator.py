@@ -6,6 +6,7 @@ import sys
 import shutil
 import amigaController
 import sys
+import amigaConfig
 
 import binascii
 
@@ -32,6 +33,26 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
     # TODO REDO IN PYTHON (not easily done)
     os.popen('cp -R "'+os.path.join(romFolder,gameName)+'/"* '+mountPoint)
     shutil.copy2(os.path.join(romFolder,gameName+".uae"),mountPoint)
+    
+    # ------------ Complete UAE ----------------
+    uaeConfig = os.path.join(mountPoint,gameName+".uae")
+    fUaeConfig = open(uaeConfig,"a+")
+    uaeConfigIsEmpty = os.path.getsize(uaeConfig) == 0
+    try :
+        # Needed or too speedy
+        amigaConfig.generateConfType(fUaeConfig)
+        amigaController.generateControllerConf(fUaeConfig)
+        amigaConfig.generateGUIConf(fUaeConfig,'false')
+        amigaConfig.generateKickstartPathWHDL(fUaeConfig,amigaHardware)
+        if uaeConfigIsEmpty : #Allow custom hardware conf in file
+            amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)
+        # Add Z3 Mem to load whole game in memory
+        amigaConfig.generateZ3Mem(fUaeConfig)
+        amigaConfig.generateGraphicConf(fUaeConfig)
+        amigaConfig.generateSoundConf(fUaeConfig)
+        generateHardDriveConf(fUaeConfig)
+    finally :
+        fUaeConfig.close()
 
     # ------------ Create StartupSequence with right slave files ------------
     fStartupSeq = open(os.path.join(mountPoint,"S","Startup-Sequence"),"a+")
@@ -51,6 +72,11 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
         
     # TODO Tweak uae file
 
+def generateHardDriveConf(fUaeConfig) :
+    fUaeConfig.write("rtg_nocustom=true\n")
+    fUaeConfig.write("filesystem2=rw,DH0:DH0:"+mountPoint+"/,0\n")
+    fUaeConfig.write("uaehf0=dir,rw,DH0:DH0:"+mountPoint+"/,0\n")
+    
 def handleBackup(fullName,romFolder,gameName,amigaHardware) :
     # ------------ WHDL structure Files before backup of backups ------------
     shutil.rmtree(os.path.join(mountPoint,'S'))
@@ -71,9 +97,9 @@ def backupDir(source,target) :
             backupDir(filePath,os.path.join(target,f))
         else :
             if not os.path.exists(os.path.join(target,f)) :
-                print ("new file : %s backup %s -> %s" %(f,source,target))
-                # TODO REDO IN PYTHON (not easily done)
+                print ("new file : %s backup %s -> %s" %(f,source,target))                
                 if os.path.isdir(os.path.join(source,f)) :
+                    # TODO REDO IN PYTHON (not easily done)
                     os.popen('cp -R "'+os.path.join(source,f)+'/"* "'+target+'"')
                 else :
                     shutil.copy2(os.path.join(source,f),target)
@@ -83,7 +109,6 @@ def backupDir(source,target) :
                 targetCRC32 = CRC32_from_file(os.path.join(target,f))
                 if not sourceCRC32 == targetCRC32 :
                     print ("changed file : %s backup %s -> %s" %(f,source,target))
-                    # TODO REDO IN PYTHON (not easily done)
                     shutil.copy2(os.path.join(source,f),target)
 
 def CRC32_from_file(filename):

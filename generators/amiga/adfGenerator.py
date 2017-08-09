@@ -5,6 +5,7 @@ import glob
 import sys
 import shutil
 import amigaController
+import amigaConfig
 
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
@@ -31,10 +32,11 @@ def generateAdf(fullName,romPath,uaeName,amigaHardware) :
     fUaeConfig = open(uaeconfig,"a+")
     try :
         amigaController.generateControllerConf(fUaeConfig)
-        generateGUIConf(fUaeConfig)
-        generateHardwareConf(fUaeConfig,amigaHardware)
+        amigaConfig.generateGUIConf(fUaeConfig)
+        amigaConfig.generateKickstartPath(fUaeConfig,amigaHardware)
+        amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)
         floppiesManagement(fUaeConfig,romPath,uaeName)
-        generateGraphicConf(fUaeConfig)
+        amigaConfig.generateGraphicConf(fUaeConfig)
     finally :
         fUaeConfig.close()
     
@@ -74,38 +76,6 @@ def floppiesManagement(fUaeConfig,romPath,uaeName) :
         nbFloppies=min(4,len(prefixed))
         fUaeConfig.write("nr_floppies="+`nbFloppies`+"\n")
         print("Number of floppies : "+`nbFloppies`)
-    
-def generateGUIConf(fUaeConfig) :
-    fUaeConfig.write("use_gui=no\n")
-    fUaeConfig.write("use_debugger=false\n")
-    # Show status leds (Status Line)
-    fUaeConfig.write("show_leds=true\n")
-    
-def generateHardwareConf (fUaeConfig,amigaHardware) :
-    # ----- Hardware configuration -----
-    if  amigaHardware == "amiga1200" :
-        print ("Amiga Hardware 1200 AGA")
-        fUaeConfig.write("kickstart_rom_file="+mountPoint+"/uae4arm/kickstarts/kick31.rom\n")
-        # On configure en AGA
-        fUaeConfig.write("chipset=aga\n")
-        fUaeConfig.write("chipmem_size=4\n")
-        fUaeConfig.write("cpu_speed=max\n")
-        fUaeConfig.write("cpu_type=68040\n")
-        fUaeConfig.write("cpu_model=68040\n")
-        fUaeConfig.write("fpu_model=68040\n")
-        fUaeConfig.write("fastmem_size=8\n")
-    else :
-        print("Amiga Hardware 600 ECS")
-        fUaeConfig.write("kickstart_rom_file="+mountPoint+"/uae4arm/kickstarts/kick13.rom\n")
-        fUaeConfig.write("fastmem_size=8\n")
-        
-def generateGraphicConf(fUaeConfig) :
-    # ----- GFX configuration -----
-    fUaeConfig.write("gfx_width=640\n")
-    fUaeConfig.write("gfx_height=256\n")
-    fUaeConfig.write("gfx_correct_aspect=true\n")
-    fUaeConfig.write("gfx_center_horizontal=simple\n")
-    fUaeConfig.write("gfx_center_vertical=simple\n")
 
 def generateAdfdirConf(fAdfdir) :
     fAdfdir.write("path="+mountPoint+"/uae4arm/adf/\n")
