@@ -6,8 +6,49 @@ import sys
 import shutil
 import amigaController
 
-uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
-mountPoint="/tmp/amiga"
+biosPath="/recalbox/share/bios/"
+
+def initMountpoint(mountPoint,uae4armPath) :
+    # ----- cleaning mountpoint directory ----- 
+    if os.path.exists(mountPoint) :
+        shutil.rmtree(mountPoint)
+    
+    # ----- Create & copy emulator structure -----
+    print("Copy uae4arm files to %s" % mountPoint)
+    os.makedirs(mountPoint+"/uae4arm")
+    # TODO REDO IN PYTHON (not easily done)
+    os.popen("cp -R "+uae4armPath+"/* "+mountPoint+"/uae4arm")
+    
+    # ----- Generate adfdir.conf -----
+    # ----- Needed for right handling of bios even in whdl case -----
+    adfdir = os.path.join(mountPoint,"uae4arm","conf","adfdir.conf")
+    
+    if os.path.exists(adfdir) :
+        os.remove(adfdir)
+        
+    fAdfdir = open(adfdir,"a+")
+    try :
+        generateAdfdirConf(fAdfdir,mountPoint)
+    finally :
+        fAdfdir.close()
+        
+def generateAdfdirConf(fAdfdir,mountPoint) :
+    fAdfdir.write("path="+mountPoint+"/uae4arm/adf/\n")
+    fAdfdir.write("config_path="+mountPoint+"/uae4arm/conf/\n")
+    fAdfdir.write("rom_path="+biosPath+"\n")
+    fAdfdir.write("ROMs=4\n")
+    fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000)\n")    
+    fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick13.rom")+"\n")
+    fAdfdir.write("ROMType=1\n")
+    fAdfdir.write("ROMName=KS ROM v2.04 (A500+) rev 37.175 (512k) [390979-01]\n")
+    fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick20.rom")+"\n")
+    fAdfdir.write("ROMType=1\n")
+    fAdfdir.write("ROMName=KS ROM v3.1 (A1200)\n")    
+    fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31.rom")+"\n")
+    fAdfdir.write("ROMType=1\n")
+    # apparently not needed
+    # MRUDiskList=0
+    # MRUCDList=0
 
 def generateConfType(fUaeConfig) :
     fUaeConfig.write("config_hardware=true\n")
@@ -21,15 +62,16 @@ def generateGUIConf(fUaeConfig,leds='true') :
 
 def generateKickstartPath(fUaeConfig, amigaHardware) :
     if  amigaHardware == "amiga1200" :
-        fUaeConfig.write("kickstart_rom_file="+mountPoint+"/uae4arm/kickstarts/kick31.rom\n")
+        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick31.rom")+"\n")
     else :
-        fUaeConfig.write("kickstart_rom_file="+mountPoint+"/uae4arm/kickstarts/kick13.rom\n")
+        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick13.rom")+"\n")
         
 def generateKickstartPathWHDL(fUaeConfig, amigaHardware) :
+    fUaeConfig.write("rom_path="+biosPath+"\n")
     if  amigaHardware == "amiga1200" :
-        fUaeConfig.write("kickstart_rom_file="+uae4armPath+"/kickstarts/kick31.rom\n")
+        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick31.rom")+"\n")
     else :
-        fUaeConfig.write("kickstart_rom_file="+uae4armPath+"/kickstarts/kick20.rom\n")
+        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick20.rom")+"\n")
         
     
 def generateHardwareConf (fUaeConfig,amigaHardware) :
@@ -48,6 +90,10 @@ def generateHardwareConf (fUaeConfig,amigaHardware) :
         print("Amiga Hardware 600 ECS")
         # Nothing much needed for a600 uae4arm does what needed just with the right kickstart
         fUaeConfig.write("fastmem_size=8\n")
+        
+    # unused stuff 
+    # cpu_compatible=false
+    # cpu_24bit_addressing=false
 
 def generateZ3Mem(fUaeConfig) :
     fUaeConfig.write("z3mem_size=64\n")
@@ -93,5 +139,5 @@ def generateSoundConf(fUaeConfig) :
     fUaeConfig.write("sound_auto=yes\n")
     fUaeConfig.write("cachesize=0\n")
     fUaeConfig.write("synchronize_clock=yes\n")
-    
+
     

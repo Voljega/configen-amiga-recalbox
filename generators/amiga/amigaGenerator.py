@@ -29,7 +29,7 @@ class AmigaGenerator(Generator):
         gameName= uaeName[0:len(uaeName)-4]
         
         #detect bad parameters
-        if not uaeName or not romFolder or not gameName or not len(romType)==3 or romType not in ['adf','uae'] :
+        if not uaeName or not romFolder or not gameName or not len(romType)==3 or romType.lower() not in ['adf','uae'] :
             sys.exit("Please execute this script on an uae or adf file only")
         
         print("Launching game <%s> of type <%s> from <%s>" % (gameName,romType,romFolder))
@@ -55,9 +55,9 @@ class AmigaGenerator(Generator):
             whdlGenerator.generateWHDL(rom,romFolder,gameName,system.name)
             
             # mandatory change of current working dir to uae4arm's one
-            os.chdir(uae4armPath)
-            print("Executing uae4arm -f %s in %s" %(os.path.join(mountPoint,uaeName),os.getcwd()))
-            os.popen('./uae4arm -f "'+os.path.join(mountPoint,uaeName)+'"')
+            os.chdir(os.path.join(mountPoint,"uae4arm"))
+            print("Executing uae4arm -f %s in %s" %(os.path.join(mountPoint,"WHDL",uaeName),os.getcwd()))
+            os.popen('./uae4arm -f "'+os.path.join(mountPoint,"WHDL",uaeName)+'"')
             
             whdlGenerator.handleBackup(rom,romFolder,gameName,system.name)
             

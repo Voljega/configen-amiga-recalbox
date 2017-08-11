@@ -9,19 +9,12 @@ import amigaConfig
 
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
+biosPath="/recalbox/share/bios/"
 
 def generateAdf(fullName,romPath,uaeName,amigaHardware) :
     print("execute ADF : <%s> on <%s>" %(uae4armPath+"/uae4arm",romPath + "/" + uaeName))
     
-    # ----- cleaning mountpoint directory ----- 
-    if os.path.exists(mountPoint) :
-        shutil.rmtree(mountPoint)
-    
-    # ----- Create & copy emulator structure -----
-    print("Copy uae4arm files to %s" % mountPoint)
-    os.makedirs(mountPoint+"/uae4arm")
-    # TODO REDO IN PYTHON (not easily done)
-    os.popen("cp -R "+uae4armPath+"/* "+mountPoint+"/uae4arm")
+    amigaConfig.initMountpoint(mountPoint,uae4armPath)
     
     # ----- Create uae configuration file -----
     uaeconfig = os.path.join(mountPoint,"uae4arm","conf","uaeconfig.uae")
@@ -39,18 +32,6 @@ def generateAdf(fullName,romPath,uaeName,amigaHardware) :
         amigaConfig.generateGraphicConf(fUaeConfig)
     finally :
         fUaeConfig.close()
-    
-    # ----- Generate adfdir.conf -----
-    adfdir = os.path.join(mountPoint,"uae4arm","conf","adfdir.conf")
-    
-    if os.path.exists(adfdir) :
-        os.remove(adfdir)
-        
-    fAdfdir = open(adfdir,"a+")
-    try :
-        generateAdfdirConf(fAdfdir)
-    finally :
-        fAdfdir.close()
 
 def floppiesManagement(fUaeConfig,romPath,uaeName) :
     # ----- Floppies management -----
@@ -77,14 +58,3 @@ def floppiesManagement(fUaeConfig,romPath,uaeName) :
         fUaeConfig.write("nr_floppies="+`nbFloppies`+"\n")
         print("Number of floppies : "+`nbFloppies`)
 
-def generateAdfdirConf(fAdfdir) :
-    fAdfdir.write("path="+mountPoint+"/uae4arm/adf/\n")
-    fAdfdir.write("config_path="+mountPoint+"/uae4arm/conf/\n")
-    fAdfdir.write("rom_path="+mountPoint+"/uae4arm/kickstarts/\n")
-    fAdfdir.write("ROMs=2\n")
-    fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000)\n")
-    fAdfdir.write("ROMPath="+mountPoint+"/uae4arm/kickstarts/kick13.rom\n")
-    fAdfdir.write("ROMType=1\n")
-    fAdfdir.write("ROMName=KS ROM v3.1 (A1200)\n")
-    fAdfdir.write("ROMPath="+mountPoint+"/uae4arm/kickstarts/kick31.rom\n")
-    fAdfdir.write("ROMType=1\n")

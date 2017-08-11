@@ -10,41 +10,53 @@ import amigaConfig
 
 import binascii
 
-whdFilespath="/recalbox/share/emulateurs/GAME"
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
+mountPointWHDL="/tmp/amiga/WHDL"
+biosPath="/recalbox/share/bios/"
+whdFilespath=biosPath+"amiga/whdl"
 
 def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
     print("execute WHDLoad : <%s>" % os.path.join(romFolder,gameName))
 
-    # ----- cleaning mountpoint directory ----- 
-    if os.path.exists(mountPoint) :
-        shutil.rmtree(mountPoint)
-        
-    os.makedirs(mountPoint)    
+    amigaConfig.initMountpoint(mountPoint,uae4armPath)
+    os.makedirs(mountPointWHDL)
 
     # ------------ copy WHDL structure Files ------------
-    print("Copy Amiga OS files from %s to %s" %(whdFilespath,mountPoint))
+    print("Copy WHDL bootstrap files from %s to %s" %(whdFilespath,mountPointWHDL))
     # TODO REDO IN PYTHON (not easily done)
-    os.popen('cp -R '+whdFilespath+'/* '+mountPoint)
-
+    os.popen('cp -R '+whdFilespath+'/* '+mountPointWHDL)
+    
+    # ---- copy BIOS as equivalent into WHDL structure ----
+    whdlKickstarts = os.path.join(mountPointWHDL,"Devs","Kickstarts")
+    print(whdlKickstarts)
+    shutil.copy2(os.path.join(biosPath,"kick13.rom"),os.path.join(whdlKickstarts,"kick33180.A500"))
+    shutil.copy2(os.path.join(biosPath,"kick13.rom"),os.path.join(whdlKickstarts,"kick33192.A500"))
+    shutil.copy2(os.path.join(biosPath,"kick13.rom"),os.path.join(whdlKickstarts,"kick34005.A500"))
+    # shutil.copy2(os.path.join(biosPath,"kick20.rom"),os.path.join(whdlKickstart,))
+    shutil.copy2(os.path.join(biosPath,"kick31.rom"),os.path.join(whdlKickstarts,"kick40068.A1200"))
+    
     # ------------ copy game folder & uae ------------
     print("Copy game folder and uae %s" % os.path.join(romFolder,gameName))
     # TODO REDO IN PYTHON (not easily done)
-    os.popen('cp -R "'+os.path.join(romFolder,gameName)+'/"* '+mountPoint)
-    shutil.copy2(os.path.join(romFolder,gameName+".uae"),mountPoint)
+    os.popen('cp -R "'+os.path.join(romFolder,gameName)+'/"* '+mountPointWHDL)
+    shutil.copy2(os.path.join(romFolder,gameName+".uae"),mountPointWHDL)
     
     # ------------ Complete UAE ----------------
-    uaeConfig = os.path.join(mountPoint,gameName+".uae")
+    uaeConfig = os.path.join(mountPointWHDL,gameName+".uae")
     fUaeConfig = open(uaeConfig,"a+")
     uaeConfigIsEmpty = os.path.getsize(uaeConfig) == 0
     try :
         # Needed or too speedy
         amigaConfig.generateConfType(fUaeConfig)
-        amigaController.generateControllerConf(fUaeConfig)
+        #Allow custom controllers conf in file
+        if uaeConfigIsEmpty or not ';controls' in open(uaeConfig).read() :
+            amigaController.generateControllerConf(fUaeConfig)
+            
         amigaConfig.generateGUIConf(fUaeConfig,'false')
         amigaConfig.generateKickstartPathWHDL(fUaeConfig,amigaHardware)
-        if uaeConfigIsEmpty : #Allow custom hardware conf in file
+        #Allow custom hardware conf in file
+        if uaeConfigIsEmpty or not ';hardware' in open(uaeConfig).read() : 
             amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)
         # Add Z3 Mem to load whole game in memory
         amigaConfig.generateZ3Mem(fUaeConfig)
@@ -53,11 +65,11 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
         generateHardDriveConf(fUaeConfig)
     finally :
         fUaeConfig.close()
-
+    
     # ------------ Create StartupSequence with right slave files ------------
-    fStartupSeq = open(os.path.join(mountPoint,"S","Startup-Sequence"),"a+")
+    fStartupSeq = open(os.path.join(mountPointWHDL,"S","Startup-Sequence"),"a+")
     try :
-        slaveFiles = [filename for filename in os.listdir(mountPoint) if filename.endswith(".Slave") or filename.endswith(".slave")]
+        slaveFiles = [filename for filename in os.listdir(mountPointWHDL) if filename.endswith(".Slave") or filename.endswith(".slave")]
         print(slaveFiles)
         if len(slaveFiles)==0 :
             sys.exit("This is not a valid WHD game")
@@ -71,22 +83,22 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
         fStartupSeq.close()
         
     # TODO Tweak uae file
-
+    
 def generateHardDriveConf(fUaeConfig) :
     fUaeConfig.write("rtg_nocustom=true\n")
-    fUaeConfig.write("filesystem2=rw,DH0:DH0:"+mountPoint+"/,0\n")
-    fUaeConfig.write("uaehf0=dir,rw,DH0:DH0:"+mountPoint+"/,0\n")
+    fUaeConfig.write("filesystem2=rw,DH0:DH0:"+mountPointWHDL+"/,0\n")
+    fUaeConfig.write("uaehf0=dir,rw,DH0:DH0:"+mountPointWHDL+"/,0\n")
     
 def handleBackup(fullName,romFolder,gameName,amigaHardware) :
     # ------------ WHDL structure Files before backup of backups ------------
-    shutil.rmtree(os.path.join(mountPoint,'S'))
-    shutil.rmtree(os.path.join(mountPoint,'C'))
-    shutil.rmtree(os.path.join(mountPoint,'Devs'))
-    os.remove(os.path.join(mountPoint,gameName+".uae"))
+    shutil.rmtree(os.path.join(mountPointWHDL,'S'))
+    shutil.rmtree(os.path.join(mountPointWHDL,'C'))
+    shutil.rmtree(os.path.join(mountPointWHDL,'Devs'))
+    os.remove(os.path.join(mountPointWHDL,gameName+".uae"))
     
     # ------------ detect changes in remaining games files for backuping saves ------------
-    print("Backup changed files from %s to %s" %(mountPoint,os.path.join(romFolder,gameName)))
-    backupDir(mountPoint,os.path.join(romFolder,gameName))
+    print("Backup changed files from %s to %s" %(mountPointWHDL,os.path.join(romFolder,gameName)))
+    backupDir(mountPointWHDL,os.path.join(romFolder,gameName))
 
 def backupDir(source,target) :
     # print("backup dir <%s> <%s>" %(source, target))
