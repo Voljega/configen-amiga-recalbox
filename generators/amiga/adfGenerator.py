@@ -11,7 +11,7 @@ uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
 biosPath="/recalbox/share/bios/"
 
-def generateAdf(fullName,romPath,uaeName,amigaHardware) :
+def generateAdf(fullName,romPath,uaeName,amigaHardware,controller) :
     print("execute ADF : <%s> on <%s>" %(uae4armPath+"/uae4arm",romPath + "/" + uaeName))
     
     amigaConfig.initMountpoint(mountPoint,uae4armPath)
@@ -25,6 +25,7 @@ def generateAdf(fullName,romPath,uaeName,amigaHardware) :
     fUaeConfig = open(uaeconfig,"a+")
     try :
         amigaController.generateControllerConf(fUaeConfig)
+        amigaController.generateSpecialKeys(fUaeConfig,controller)
         amigaConfig.generateGUIConf(fUaeConfig)
         amigaConfig.generateKickstartPath(fUaeConfig,amigaHardware)
         amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)

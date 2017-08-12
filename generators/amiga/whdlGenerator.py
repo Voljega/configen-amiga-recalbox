@@ -16,7 +16,7 @@ mountPointWHDL="/tmp/amiga/WHDL"
 biosPath="/recalbox/share/bios/"
 whdFilespath=biosPath+"amiga/whdl"
 
-def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
+def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
     print("execute WHDLoad : <%s>" % os.path.join(romFolder,gameName))
 
     amigaConfig.initMountpoint(mountPoint,uae4armPath)
@@ -52,7 +52,8 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware) :
         #Allow custom controllers conf in file
         if uaeConfigIsEmpty or not ';controls' in open(uaeConfig).read() :
             amigaController.generateControllerConf(fUaeConfig)
-            
+        
+        amigaController.generateSpecialKeys(fUaeConfig,controller)
         amigaConfig.generateGUIConf(fUaeConfig,'false')
         amigaConfig.generateKickstartPathWHDL(fUaeConfig,amigaHardware)
         #Allow custom hardware conf in file

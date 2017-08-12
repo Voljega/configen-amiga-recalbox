@@ -34,12 +34,14 @@ class AmigaGenerator(Generator):
         
         print("Launching game <%s> of type <%s> from <%s>" % (gameName,romType,romFolder))
         
+        controller = playersControllers['1']
+        
         #------------ Launch ADF ------------
         if	romType == "adf" :
             if not os.path.exists(os.path.join(romFolder,uaeName)) :
                 sys.exit("ADF file "+romFolder + "/" + uaeName +"doesn't exist")
             
-            adfGenerator.generateAdf(rom,romFolder,uaeName,system.name)
+            adfGenerator.generateAdf(rom,romFolder,uaeName,system.name,controller)
             
             # mandatory change of current working dir to uae4arm's one
             os.chdir(os.path.join(mountPoint,"uae4arm"))
@@ -52,7 +54,7 @@ class AmigaGenerator(Generator):
             if not os.path.exists(whdlDir) or not os.path.isdir(whdlDir):
                 sys.exit("No WHDLoad folder <"+whdlDir+"> corresponding to your uae file "+  romFolder+"/"+uaeName)
             
-            whdlGenerator.generateWHDL(rom,romFolder,gameName,system.name)
+            whdlGenerator.generateWHDL(rom,romFolder,gameName,system.name,controller)
             
             # mandatory change of current working dir to uae4arm's one
             os.chdir(os.path.join(mountPoint,"uae4arm"))
