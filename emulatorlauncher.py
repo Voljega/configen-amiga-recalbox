@@ -12,7 +12,7 @@ from generators.kodi.kodiGenerator import KodiGenerator
 from generators.moonlight.moonlightGenerator import MoonlightGenerator
 from generators.scummvm.scummvmGenerator import ScummVMGenerator
 from generators.dosbox.dosboxGenerator import DosBoxGenerator
-from generators.amiga.amigaGenerator import AmigaGenerator
+from generators.amiberry.amiberryGenerator import AmiberryGenerator
 from generators.configManager import ConfigManager
 import controllersConfig as controllers
 import utils.runner as runner
@@ -28,7 +28,7 @@ generators = {
     'moonlight': MoonlightGenerator(),
     'scummvm': ScummVMGenerator(),
     'dosbox': DosBoxGenerator(),
-    'amiga': AmigaGenerator()
+    'amiberry': AmiberryGenerator()
 }
 
 # List emulators with their cores rest mupen64, scummvm
@@ -84,8 +84,8 @@ emulators["cavestory"] = Emulator(name='cavestory', emulator='libretro', core='n
 emulators["imageviewer"] = Emulator(name='imageviewer', emulator='libretro', core='imageviewer')
 emulators["scummvm"] = Emulator(name='scummvm', emulator='scummvm', videomode='default')
 emulators["pc"] = Emulator(name='pc', emulator='dosbox', videomode='default')
-emulators["amiga600"] = Emulator(name='amiga600', emulator='amiga')
-emulators["amiga1200"] = Emulator(name='amiga1200', emulator='amiga')
+emulators["amiga600"] = Emulator(name='amiga600', emulator='amiberry')
+emulators["amiga1200"] = Emulator(name='amiga1200', emulator='amiberry')
 
 emulators["kodi"] = Emulator(name='kodi', emulator='kodi', videomode='default')
 emulators["moonlight"] = Emulator(name='moonlight', emulator='moonlight')

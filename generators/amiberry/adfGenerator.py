@@ -4,8 +4,8 @@ import os.path
 import glob
 import sys
 import shutil
-import amigaController
-import amigaConfig
+import amiberryController
+import amiberryConfig
 
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
@@ -14,7 +14,7 @@ biosPath="/recalbox/share/bios/"
 def generateAdf(fullName,romPath,uaeName,amigaHardware,controller) :
     print("execute ADF : <%s> on <%s>" %(uae4armPath+"/uae4arm",romPath + "/" + uaeName))
     
-    amigaConfig.initMountpoint(mountPoint,uae4armPath)
+    amiberryConfig.initMountpoint(mountPoint,uae4armPath)
     
     # ----- Create uae configuration file -----
     uaeconfig = os.path.join(mountPoint,"uae4arm","conf","uaeconfig.uae")
@@ -24,13 +24,13 @@ def generateAdf(fullName,romPath,uaeName,amigaHardware,controller) :
         
     fUaeConfig = open(uaeconfig,"a+")
     try :
-        amigaController.generateControllerConf(fUaeConfig)
-        amigaController.generateSpecialKeys(fUaeConfig,controller)
-        amigaConfig.generateGUIConf(fUaeConfig)
-        amigaConfig.generateKickstartPath(fUaeConfig,amigaHardware)
-        amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)
+        amiberryController.generateControllerConf(fUaeConfig)
+        amiberryController.generateSpecialKeys(fUaeConfig,controller)
+        amiberryConfig.generateGUIConf(fUaeConfig)
+        amiberryConfig.generateKickstartPath(fUaeConfig,amigaHardware)
+        amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
         floppiesManagement(fUaeConfig,romPath,uaeName)
-        amigaConfig.generateGraphicConf(fUaeConfig)
+        amiberryConfig.generateGraphicConf(fUaeConfig)
     finally :
         fUaeConfig.close()
 

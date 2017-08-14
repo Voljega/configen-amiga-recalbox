@@ -4,9 +4,9 @@ import os.path
 import glob
 import sys
 import shutil
-import amigaController
+import amiberryController
 import sys
-import amigaConfig
+import amiberryConfig
 
 import binascii
 
@@ -19,7 +19,7 @@ whdFilespath=biosPath+"amiga/whdl"
 def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
     print("execute WHDLoad : <%s>" % os.path.join(romFolder,gameName))
 
-    amigaConfig.initMountpoint(mountPoint,uae4armPath)
+    amiberryConfig.initMountpoint(mountPoint,uae4armPath)
     os.makedirs(mountPointWHDL)
 
     # ------------ copy WHDL structure Files ------------
@@ -48,21 +48,21 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
     uaeConfigIsEmpty = os.path.getsize(uaeConfig) == 0
     try :
         # Needed or too speedy
-        amigaConfig.generateConfType(fUaeConfig)
+        amiberryConfig.generateConfType(fUaeConfig)
         #Allow custom controllers conf in file
         if uaeConfigIsEmpty or not ';controls' in open(uaeConfig).read() :
-            amigaController.generateControllerConf(fUaeConfig)
+            amiberryController.generateControllerConf(fUaeConfig)
         
-        amigaController.generateSpecialKeys(fUaeConfig,controller)
-        amigaConfig.generateGUIConf(fUaeConfig,'false')
-        amigaConfig.generateKickstartPathWHDL(fUaeConfig,amigaHardware)
+        amiberryController.generateSpecialKeys(fUaeConfig,controller)
+        amiberryConfig.generateGUIConf(fUaeConfig,'false')
+        amiberryConfig.generateKickstartPathWHDL(fUaeConfig,amigaHardware)
         #Allow custom hardware conf in file
         if uaeConfigIsEmpty or not ';hardware' in open(uaeConfig).read() : 
-            amigaConfig.generateHardwareConf(fUaeConfig,amigaHardware)
+            amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
         # Add Z3 Mem to load whole game in memory
-        amigaConfig.generateZ3Mem(fUaeConfig)
-        amigaConfig.generateGraphicConf(fUaeConfig)
-        amigaConfig.generateSoundConf(fUaeConfig)
+        amiberryConfig.generateZ3Mem(fUaeConfig)
+        amiberryConfig.generateGraphicConf(fUaeConfig)
+        amiberryConfig.generateSoundConf(fUaeConfig)
         generateHardDriveConf(fUaeConfig)
     finally :
         fUaeConfig.close()

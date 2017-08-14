@@ -11,7 +11,7 @@ import whdlGenerator
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
 
-class AmigaGenerator(Generator):
+class AmiberryGenerator(Generator):
     # Main entry of the module
     # Return command
     def generate(self, system, rom, playersControllers):

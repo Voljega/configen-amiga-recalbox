@@ -4,7 +4,6 @@ import os.path
 import glob
 import sys
 import shutil
-import amigaController
 
 biosPath="/recalbox/share/bios/"
 
