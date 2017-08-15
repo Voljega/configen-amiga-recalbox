@@ -6,6 +6,7 @@ import sys
 import shutil
 import amiberryController
 import amiberryConfig
+from settings.unixSettings import UnixSettings
 
 uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
 mountPoint="/tmp/amiga"
@@ -21,18 +22,15 @@ def generateAdf(fullName,romPath,uaeName,amigaHardware,controller) :
     
     if os.path.exists(uaeconfig) :
         os.remove(uaeconfig)
-        
-    fUaeConfig = open(uaeconfig,"a+")
-    try :
-        amiberryController.generateControllerConf(fUaeConfig)
-        amiberryController.generateSpecialKeys(fUaeConfig,controller)
-        amiberryConfig.generateGUIConf(fUaeConfig)
-        amiberryConfig.generateKickstartPath(fUaeConfig,amigaHardware)
-        amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
-        floppiesManagement(fUaeConfig,romPath,uaeName)
-        amiberryConfig.generateGraphicConf(fUaeConfig)
-    finally :
-        fUaeConfig.close()
+    
+    fUaeConfig = UnixSettings(uaeconfig, separator='', defaultComment=';')
+    amiberryController.generateControllerConf(fUaeConfig)
+    amiberryController.generateSpecialKeys(fUaeConfig,controller)
+    amiberryConfig.generateGUIConf(fUaeConfig)
+    amiberryConfig.generateKickstartPath(fUaeConfig,amigaHardware)
+    amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
+    floppiesManagement(fUaeConfig,romPath,uaeName)
+    amiberryConfig.generateGraphicConf(fUaeConfig)
 
 def floppiesManagement(fUaeConfig,romPath,uaeName) :
     # ----- Floppies management -----
@@ -40,10 +38,10 @@ def floppiesManagement(fUaeConfig,romPath,uaeName) :
     
     if indexDisk == -1 :
         # Mono disk
-        fUaeConfig.write("floppy0="+os.path.join(romPath,uaeName)+"\n")
+        fUaeConfig.save("floppy0",os.path.join(romPath,uaeName))
         print("Added %s as floppy0" % os.path.join(romPath,uaeName))
-        fUaeConfig.write("floppy0type=0\n")
-        fUaeConfig.write("nr_floppies=1\n")
+        fUaeConfig.save("floppy0type","0")
+        fUaeConfig.save("nr_floppies","1")
         print("Number of floppies : 1")
     
     else :
@@ -51,11 +49,11 @@ def floppiesManagement(fUaeConfig,romPath,uaeName) :
         prefix = uaeName[0:indexDisk+4]
         prefixed = [filename for filename in os.listdir(romPath) if filename.startswith(prefix)]
         for i in range(0,min(4,len(prefixed))) :
-            fUaeConfig.write("floppy"+`i`+"="+os.path.join(romPath,prefixed[i])+"\n")
+            fUaeConfig.save("floppy"+`i`,os.path.join(romPath,prefixed[i]))
             print("Added %s as floppy%i" % (os.path.join(romPath,prefixed[i]),i))
-            fUaeConfig.write("floppy"+`i`+"type=0\n")
+            fUaeConfig.save("floppy"+`i`+"type","0")
         
         nbFloppies=min(4,len(prefixed))
-        fUaeConfig.write("nr_floppies="+`nbFloppies`+"\n")
+        fUaeConfig.save("nr_floppies",`nbFloppies`)
         print("Number of floppies : "+`nbFloppies`)
 

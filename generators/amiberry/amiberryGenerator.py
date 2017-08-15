@@ -58,8 +58,8 @@ class AmiberryGenerator(Generator):
             
             # mandatory change of current working dir to uae4arm's one
             os.chdir(os.path.join(mountPoint,"uae4arm"))
-            print("Executing uae4arm -f %s in %s" %(os.path.join(mountPoint,"WHDL",uaeName),os.getcwd()))
-            os.popen('./uae4arm -f "'+os.path.join(mountPoint,"WHDL",uaeName)+'"')
+            print("Executing uae4arm -f %s in %s" %(os.path.join(mountPoint,"WHDL","uaeconfig.uae"),os.getcwd()))
+            os.popen('./uae4arm -f "'+os.path.join(mountPoint,"WHDL","uaeconfig.uae")+'"')
             
             whdlGenerator.handleBackup(rom,romFolder,gameName,system.name)
             

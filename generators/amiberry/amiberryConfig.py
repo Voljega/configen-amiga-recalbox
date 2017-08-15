@@ -36,41 +36,44 @@ def generateAdfdirConf(fAdfdir,mountPoint) :
     fAdfdir.write("config_path="+mountPoint+"/uae4arm/conf/\n")
     fAdfdir.write("rom_path="+biosPath+"\n")
     fAdfdir.write("ROMs=4\n")
-    fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000)\n")    
+    fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000) rev 34.5 (256k) [315093-02]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick13.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
     fAdfdir.write("ROMName=KS ROM v2.04 (A500+) rev 37.175 (512k) [390979-01]\n")
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick20.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
-    fAdfdir.write("ROMName=KS ROM v3.1 (A1200)\n")    
+    fAdfdir.write("ROMName=KS ROM v3.1 (A1200) rev 40.68 (512k) [391773-01/391774-01]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31.rom")+"\n")
+    fAdfdir.write("ROMType=1\n")
+    fAdfdir.write("ROMName= AROS KS ROM (built-in) (1024k)\n")
+    fAdfdir.write("ROMPath=:AROS\n")
     fAdfdir.write("ROMType=1\n")
     # apparently not needed
     # MRUDiskList=0
     # MRUCDList=0
 
 def generateConfType(fUaeConfig) :
-    fUaeConfig.write("config_hardware=true\n")
-    fUaeConfig.write("config_host=true\n")
+    fUaeConfig.save("config_hardware","true")
+    fUaeConfig.save("config_host","true")
 
 def generateGUIConf(fUaeConfig,leds='true') :
-    fUaeConfig.write("use_gui=no\n")
-    fUaeConfig.write("use_debugger=false\n")
+    fUaeConfig.save("use_gui","no")
+    fUaeConfig.save("use_debugger","false")
     # Show status leds (Status Line)
-    fUaeConfig.write("show_leds="+leds+"\n")
+    fUaeConfig.save("show_leds",leds)
 
 def generateKickstartPath(fUaeConfig, amigaHardware) :
     if  amigaHardware == "amiga1200" :
-        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick31.rom")+"\n")
+        fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick31.rom"))
     else :
-        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick13.rom")+"\n")
+        fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick13.rom"))
         
 def generateKickstartPathWHDL(fUaeConfig, amigaHardware) :
-    fUaeConfig.write("rom_path="+biosPath+"\n")
+    fUaeConfig.save("rom_path",biosPath)
     if  amigaHardware == "amiga1200" :
-        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick31.rom")+"\n")
+        fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick31.rom"))
     else :
-        fUaeConfig.write("kickstart_rom_file="+os.path.join(biosPath,"kick20.rom")+"\n")
+        fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick20.rom"))
         
     
 def generateHardwareConf (fUaeConfig,amigaHardware) :
@@ -78,33 +81,33 @@ def generateHardwareConf (fUaeConfig,amigaHardware) :
     if  amigaHardware == "amiga1200" :
         print ("Amiga Hardware 1200 AGA")
         # On configure en AGA
-        fUaeConfig.write("chipset=aga\n")
-        fUaeConfig.write("chipmem_size=4\n")
-        fUaeConfig.write("cpu_speed=max\n")
-        fUaeConfig.write("cpu_type=68040\n")
-        fUaeConfig.write("cpu_model=68040\n")
-        fUaeConfig.write("fpu_model=68040\n")
-        fUaeConfig.write("fastmem_size=8\n")
+        fUaeConfig.save("chipset","aga")
+        fUaeConfig.save("chipmem_size","4")
+        fUaeConfig.save("cpu_speed","max")
+        fUaeConfig.save("cpu_type","68040")
+        fUaeConfig.save("cpu_model","68040")
+        fUaeConfig.save("fpu_model","68040")
+        fUaeConfig.save("fastmem_size","8")
     else :
         print("Amiga Hardware 600 ECS")
         # Nothing much needed for a600 uae4arm does what needed just with the right kickstart
-        fUaeConfig.write("fastmem_size=8\n")
+        fUaeConfig.save("fastmem_size","8")
         
     # unused stuff 
     # cpu_compatible=false
     # cpu_24bit_addressing=false
 
 def generateZ3Mem(fUaeConfig) :
-    fUaeConfig.write("z3mem_size=64\n")
-    fUaeConfig.write("z3mem_start=0x1000000\n")
+    fUaeConfig.save("z3mem_size","64")
+    fUaeConfig.save("z3mem_start","0x1000000")
         
 def generateGraphicConf(fUaeConfig) :
     # ----- GFX configuration -----
-    fUaeConfig.write("gfx_width=640\n")
-    fUaeConfig.write("gfx_height=256\n")
-    fUaeConfig.write("gfx_correct_aspect=true\n")
-    fUaeConfig.write("gfx_center_horizontal=simple\n")
-    fUaeConfig.write("gfx_center_vertical=simple\n")
+    fUaeConfig.save("gfx_width","640")
+    fUaeConfig.save("gfx_height","256")
+    fUaeConfig.save("gfx_correct_aspect","true")
+    fUaeConfig.save("gfx_center_horizontal","simple")
+    fUaeConfig.save("gfx_center_vertical","simple")
     # extra ? doesn't seem needed
     # gfx_refreshrate=0
     # gfx_vsync=true
@@ -125,18 +128,18 @@ def generateGraphicConf(fUaeConfig) :
         
 def generateSoundConf(fUaeConfig) :
     # ----- Sound configuration -----
-    fUaeConfig.write("sound_output=exact\n")
-    fUaeConfig.write("sound_bits=16\n")
-    fUaeConfig.write("sound_channels=stereo\n")
-    fUaeConfig.write("sound_stereo_separation=7\n")
-    fUaeConfig.write("sound_stereo_mixing_delay=0\n")
-    fUaeConfig.write("sound_frequency=44100\n")
-    fUaeConfig.write("sound_interpol=none\n")
-    fUaeConfig.write("sound_filter=off\n")
-    fUaeConfig.write("sound_filter_type=standard\n")
-    fUaeConfig.write("sound_volume=0\n")
-    fUaeConfig.write("sound_auto=yes\n")
-    fUaeConfig.write("cachesize=0\n")
-    fUaeConfig.write("synchronize_clock=yes\n")
+    fUaeConfig.save("sound_output","exact")
+    fUaeConfig.save("sound_bits","16")
+    fUaeConfig.save("sound_channels","stereo")
+    fUaeConfig.save("sound_stereo_separation","7")
+    fUaeConfig.save("sound_stereo_mixing_delay","0")
+    fUaeConfig.save("sound_frequency","44100")
+    fUaeConfig.save("sound_interpol","none")
+    fUaeConfig.save("sound_filter","off")
+    fUaeConfig.save("sound_filter_type","standard")
+    fUaeConfig.save("sound_volume","0")
+    fUaeConfig.save("sound_auto","yes")
+    fUaeConfig.save("cachesize","0")
+    fUaeConfig.save("synchronize_clock","yes")
 
     
