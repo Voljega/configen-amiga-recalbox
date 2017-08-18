@@ -86,6 +86,7 @@ emulators["scummvm"] = Emulator(name='scummvm', emulator='scummvm', videomode='d
 emulators["pc"] = Emulator(name='pc', emulator='dosbox', videomode='default')
 emulators["amiga600"] = Emulator(name='amiga600', emulator='amiberry')
 emulators["amiga1200"] = Emulator(name='amiga1200', emulator='amiberry')
+emulators["amigacd32"] = Emulator(name='amigacd32', emulator='amiberry')
 
 emulators["kodi"] = Emulator(name='kodi', emulator='kodi', videomode='default')
 emulators["moonlight"] = Emulator(name='moonlight', emulator='moonlight')

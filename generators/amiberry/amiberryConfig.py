@@ -35,7 +35,10 @@ def generateAdfdirConf(fAdfdir,mountPoint) :
     fAdfdir.write("path="+mountPoint+"/uae4arm/adf/\n")
     fAdfdir.write("config_path="+mountPoint+"/uae4arm/conf/\n")
     fAdfdir.write("rom_path="+biosPath+"\n")
-    fAdfdir.write("ROMs=4\n")
+    fAdfdir.write("ROMs=6\n")
+    fAdfdir.write("ROMName=CD32 extended ROM rev 40.60 (512k)\n")
+    fAdfdir.write("ROMPath="+os.path.join(biosPath,"CD32ext.rom")+"\n")
+    fAdfdir.write("ROMType=4\n")
     fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000) rev 34.5 (256k) [315093-02]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick13.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
@@ -45,6 +48,9 @@ def generateAdfdirConf(fAdfdir,mountPoint) :
     fAdfdir.write("ROMName=KS ROM v3.1 (A1200) rev 40.68 (512k) [391773-01/391774-01]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
+    fAdfdir.write("ROMName=CD32 KS ROM v3.1 rev 40.60 (512k)\n")
+    fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31CD32.rom")+"\n")
+    fAdfdir.write("ROMType=2\n")
     fAdfdir.write("ROMName= AROS KS ROM (built-in) (1024k)\n")
     fAdfdir.write("ROMPath=:AROS\n")
     fAdfdir.write("ROMType=1\n")
@@ -75,6 +81,11 @@ def generateKickstartPathWHDL(fUaeConfig, amigaHardware) :
     else :
         fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick20.rom"))
         
+def generateKickstartPathCD32(fUaeConfig, amigaHardware) :
+    fUaeConfig.save("rom_path",biosPath)
+    fUaeConfig.save("kickstart_rom_file",os.path.join(biosPath,"kick31CD32.rom"))
+    fUaeConfig.save("kickstart_ext_rom_file",os.path.join(biosPath,"CD32ext.rom"))
+    fUaeConfig.save("flash_file",os.path.join(biosPath,"cd32.nvr"))
     
 def generateHardwareConf (fUaeConfig,amigaHardware) :
     # ----- Hardware configuration -----
@@ -88,10 +99,24 @@ def generateHardwareConf (fUaeConfig,amigaHardware) :
         fUaeConfig.save("cpu_model","68040")
         fUaeConfig.save("fpu_model","68040")
         fUaeConfig.save("fastmem_size","8")
-    else :
+    elif amigaHardware == "amiga600" :
         print("Amiga Hardware 600 ECS")
         # Nothing much needed for a600 uae4arm does what needed just with the right kickstart
         fUaeConfig.save("fastmem_size","8")
+    elif amigaHardware == "amigacd32" :
+        print ("Amiga Hardware CD32")
+        fUaeConfig.save("chipset","aga")
+        fUaeConfig.save("chipmem_size","4")
+        fUaeConfig.save("finegrain_cpu_speed","1024")
+        fUaeConfig.save("cpu_type","68ec020")
+        fUaeConfig.save("cpu_model","68020")
+        fUaeConfig.save("fastmem_size","8")
+        fUaeConfig.save("cpu_compatible","false")
+        fUaeConfig.save("cpu_24bit_addressing","true")
+        fUaeConfig.save("cd32cd","true")
+        fUaeConfig.save("cd32c2p","true")
+        fUaeConfig.save("cd32nvram","true")
+        # rtg_modes=0x502
         
     # unused stuff 
     # cpu_compatible=false
