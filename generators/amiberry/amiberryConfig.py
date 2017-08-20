@@ -150,7 +150,17 @@ def generateGraphicConf(fUaeConfig) :
     # ; host-specific
     # pandora.blitter_in_partial_mode=0
     # pandora.cpu_speed=600
-        
+    
+def generateCD32GraphicConf(fUaeConfig) :
+    # ----- CD32 GFX configuration -----
+    fUaeConfig.save("gfx_width","704")
+    fUaeConfig.save("gfx_height","262")
+    fUaeConfig.save("gfx_correct_aspect","true")
+    fUaeConfig.save("gfx_center_horizontal","simple")
+    fUaeConfig.save("gfx_center_vertical","simple")
+    # gfx_lores=true
+    # gfx_resolution=lores
+    
 def generateSoundConf(fUaeConfig) :
     # ----- Sound configuration -----
     fUaeConfig.save("sound_output","exact")

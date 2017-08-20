@@ -31,12 +31,7 @@ def generateCD(fullName,romPath,uaeName,amigaHardware,controller) :
     amiberryConfig.generateKickstartPathCD32(fUaeConfig,amigaHardware)
     amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
     generateCD32Conf(fUaeConfig,romPath,uaeName)
-    amiberryConfig.generateGraphicConf(fUaeConfig)
-    # May need to use that as graphics for CD32
-    # gfx_width=704
-    # gfx_height=200
-    # gfx_lores=true
-    # gfx_resolution=lores
+    amiberryConfig.generateCD32GraphicConf(fUaeConfig)
     
 def generateCD32Conf(fUaeConfig,romPath,uaeName) :
     fUaeConfig.save("cdimage0",os.path.join(romPath,uaeName)+",image")
