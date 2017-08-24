@@ -15,6 +15,9 @@ biosPath="/recalbox/share/bios/"
 def generateCD(fullName,romPath,uaeName,amigaHardware,controller) :
     # TODO Also allow to use Amiga CD ?
     
+    if not amiberryConfig.hasCD32Kickstarts() :
+        sys.exit("No CD32 kickstarts found")
+    
     print("execute CD32 : <%s> on <%s>" %(uae4armPath+"/uae4arm",romPath + "/" + uaeName))
     
     amiberryConfig.initMountpoint(mountPoint,uae4armPath)

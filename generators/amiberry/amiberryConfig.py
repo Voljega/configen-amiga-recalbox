@@ -30,15 +30,23 @@ def initMountpoint(mountPoint,uae4armPath) :
         generateAdfdirConf(fAdfdir,mountPoint)
     finally :
         fAdfdir.close()
+
+def hasCD32Kickstarts() : return os.path.exists(os.path.join(biosPath,"CD32ext.rom")) and os.path.exists(os.path.join(biosPath,"kick31CD32.rom"))
         
 def generateAdfdirConf(fAdfdir,mountPoint) :
+    
+    
     fAdfdir.write("path="+mountPoint+"/uae4arm/adf/\n")
     fAdfdir.write("config_path="+mountPoint+"/uae4arm/conf/\n")
     fAdfdir.write("rom_path="+biosPath+"\n")
-    fAdfdir.write("ROMs=6\n")
-    fAdfdir.write("ROMName=CD32 extended ROM rev 40.60 (512k)\n")
-    fAdfdir.write("ROMPath="+os.path.join(biosPath,"CD32ext.rom")+"\n")
-    fAdfdir.write("ROMType=4\n")
+    if (hasCD32Kickstarts()) :
+        fAdfdir.write("ROMs=6\n")
+        fAdfdir.write("ROMName=CD32 extended ROM rev 40.60 (512k)\n")
+        fAdfdir.write("ROMPath="+os.path.join(biosPath,"CD32ext.rom")+"\n")
+        fAdfdir.write("ROMType=4\n")
+    else :
+        fAdfdir.write("ROMs=4\n")
+        
     fAdfdir.write("ROMName=KS ROM v1.3 (A500,A1000,A2000) rev 34.5 (256k) [315093-02]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick13.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
@@ -48,9 +56,11 @@ def generateAdfdirConf(fAdfdir,mountPoint) :
     fAdfdir.write("ROMName=KS ROM v3.1 (A1200) rev 40.68 (512k) [391773-01/391774-01]\n")    
     fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31.rom")+"\n")
     fAdfdir.write("ROMType=1\n")
-    fAdfdir.write("ROMName=CD32 KS ROM v3.1 rev 40.60 (512k)\n")
-    fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31CD32.rom")+"\n")
-    fAdfdir.write("ROMType=2\n")
+    if (hasCD32Kickstarts()) :
+        fAdfdir.write("ROMName=CD32 KS ROM v3.1 rev 40.60 (512k)\n")
+        fAdfdir.write("ROMPath="+os.path.join(biosPath,"kick31CD32.rom")+"\n")
+        fAdfdir.write("ROMType=2\n")
+        
     fAdfdir.write("ROMName= AROS KS ROM (built-in) (1024k)\n")
     fAdfdir.write("ROMPath=:AROS\n")
     fAdfdir.write("ROMType=1\n")
