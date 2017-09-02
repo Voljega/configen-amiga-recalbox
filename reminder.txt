@@ -1,0 +1,31 @@
+python -m compileall <your_script.py>
+ 
+python setup.py install 
+modifier setup.py pour ajouter dépendances
+
+ADF :
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga1200 -rom "/recalbox/share/roms/amiga1200/[Adventure]/Valhalla and the Lord of Infinity (1994)(Vulcan)(Disk 1 of 6)(Boot)[cr DLM].adf" -emulator default -core default
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga600 -rom "/recalbox/share/roms/amiga600/TestSet/Adf/Rick Dangerous.adf" -emulator default -core default
+
+WHDL :
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga1200 -rom "/recalbox/share/roms/amiga1200/TestSet/Jaguar XJ220.uae" -emulator default -core default
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga600 -rom "/recalbox/share/roms/amiga600/TestSet/Captain Blood.uae" -emulator default -core default
+
+CD32 :
+ python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amigacd32 -rom "/recalbox/share/roms/amigacd32/Flashback.iso" -emulator default -core default
+ python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amigacd32 -rom "/recalbox/share/roms/amigacd32/Red Mars (1999)(Elbox).cue" -emulator default -core default
+
+
+BIOS correspondance :
+---------------------
+82a21c1890cae844b3df741f2762d48d    kick13.rom      kick33180.A500 kick33192.A500 kick34005.A500
+dc10d7bdd1b6f450773dfb558477c230    kick20.rom
+72ffce8541f100885da4b68a3bcf10f7                    kick40063.A600
+646773759326fbac3b2311fd8c8793ee    kick31.rom      kick40068.A1200
+88f6e141541c677f91b50893933a4eff                    kick40068.A4000
+
+5f8924d013dd57a89cf349f4cdedc6b1    kick31CD32.rom
+bb72565701b1b6faece07d68ea5da639    CD32ext.rom
+31e5bd652a7b4f2a818cd7d11a43b8bf    cd32.nvr  ?? is it a rom ?
+
+
