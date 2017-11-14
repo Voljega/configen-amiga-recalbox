@@ -3,17 +3,23 @@ python -m compileall <your_script.py>
 python setup.py install 
 modifier setup.py pour ajouter dépendances
 
-ADF :
+ADF PS3:
 python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga1200 -rom "/recalbox/share/roms/amiga1200/[Adventure]/Valhalla and the Lord of Infinity (1994)(Vulcan)(Disk 1 of 6)(Boot)[cr DLM].adf" -emulator default -core default
 python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga600 -rom "/recalbox/share/roms/amiga600/TestSet/Adf/Rick Dangerous.adf" -emulator default -core default
 
-WHDL :
+WHDL PS3:
 python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga1200 -rom "/recalbox/share/roms/amiga1200/TestSet/Jaguar XJ220.uae" -emulator default -core default
 python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amiga600 -rom "/recalbox/share/roms/amiga600/TestSet/Captain Blood.uae" -emulator default -core default
 
-CD32 :
+CD32 PS3:
  python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amigacd32 -rom "/recalbox/share/roms/amigacd32/Flashback.iso" -emulator default -core default
  python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 060000004c0500006802000000010000 -p1name "PLAYSTATION(R)3 Controller" -p1devicepath /dev/input/event0 -system amigacd32 -rom "/recalbox/share/roms/amigacd32/Red Mars (1999)(Elbox).cue" -emulator default -core default
+
+ADF X360 : 
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 030000005e0400008e02000014010000 -p1name "Microsoft X-Box 360 pad" -p1nbaxes 4 -p1devicepath /dev/input/event1 -system amiga600 -rom "/recalbox/share/roms/amiga600/TestSet/Adf/Rick Dangerous.adf" -emulator default -core default -ratio auto
+
+WHDL X360 :
+python /usr/lib/python2.7/site-packages/configgen/emulatorlauncher.py -p1index 0 -p1guid 030000005e0400008e02000014010000 -p1name "Microsoft X-Box 360 pad" -p1nbaxes 4 -p1devicepath /dev/input/event1 -system amiga1200 -rom "/recalbox/share/roms/amiga1200/TestSet/Jaguar XJ220.uae" -emulator default -core default -ratio auto 
 
 
 BIOS correspondance :
@@ -27,5 +33,4 @@ dc10d7bdd1b6f450773dfb558477c230    kick20.rom
 5f8924d013dd57a89cf349f4cdedc6b1    kick31CD32.rom
 bb72565701b1b6faece07d68ea5da639    CD32ext.rom
 31e5bd652a7b4f2a818cd7d11a43b8bf    cd32.nvr  ?? is it a rom ?
-
 
