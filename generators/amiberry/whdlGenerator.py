@@ -10,7 +10,7 @@ import amiberryConfig
 import binascii
 from settings.unixSettings import UnixSettings
 
-uae4armPath="/recalbox/share/emulateurs/amiga/uae4arm"
+amiberryPath="/usr/bin/"
 mountPoint="/tmp/amiga"
 mountPointWHDL="/tmp/amiga/WHDL"
 biosPath="/recalbox/share/bios/"
@@ -19,7 +19,7 @@ whdFilespath=biosPath+"amiga/whdl"
 def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
     print("execute WHDLoad : <%s>" % os.path.join(romFolder,gameName))
 
-    amiberryConfig.initMountpoint(mountPoint,uae4armPath)
+    amiberryConfig.initMountpoint(mountPoint,amiberryPath)
     os.makedirs(mountPointWHDL)
 
     # ------------ copy WHDL structure Files ------------
@@ -40,10 +40,10 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
     print("Copy game folder and uae %s" % os.path.join(romFolder,gameName))
     # TODO REDO IN PYTHON (not easily done)
     os.popen('cp -R "'+os.path.join(romFolder,gameName)+'/"* '+mountPointWHDL)
-    shutil.copy2(os.path.join(romFolder,gameName+".uae"),os.path.join(mountPointWHDL,"uaeconfig.uae"))
+    shutil.copy2(os.path.join(romFolder,gameName+".uae"),os.path.join(mountPoint,"amiberry","conf","uaeconfig.uae"))
     
     # ------------ Complete UAE ----------------
-    uaeConfig = os.path.join(mountPointWHDL,"uaeconfig.uae")
+    uaeConfig = os.path.join(mountPoint,"amiberry","conf","uaeconfig.uae")
     
     fUaeConfig = UnixSettings(uaeConfig, separator='', defaultComment=';')
     uaeConfigIsEmpty = os.path.getsize(uaeConfig) == 0
@@ -62,11 +62,15 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
         amiberryConfig.generateHardwareConf(fUaeConfig,amigaHardware)
     # Add Z3 Mem to load whole game in memory
     amiberryConfig.generateZ3Mem(fUaeConfig)
-    amiberryConfig.generateGraphicConf(fUaeConfig)
+    if uaeConfigIsEmpty or not ';graphics' in open(uaeConfig).read() :
+        amiberryConfig.generateGraphicConf(fUaeConfig)
     amiberryConfig.generateSoundConf(fUaeConfig)
     generateHardDriveConf(fUaeConfig)
     
     # ------------ Create StartupSequence with right slave files ------------
+    customLaunch = os.path.join(romFolder,gameName+".whdl")
+    gotAddedParams = os.path.exists(customLaunch) and not os.path.getsize(customLaunch) == 0
+    
     fStartupSeq = open(os.path.join(mountPointWHDL,"S","Startup-Sequence"),"a+")
     try :
         slaveFiles = [filename for filename in os.listdir(mountPointWHDL) if filename.endswith(".Slave") or filename.endswith(".slave")]
@@ -75,14 +79,18 @@ def generateWHDL(fullName,romFolder,gameName,amigaHardware,controller) :
             sys.exit("This is not a valid WHD game")
         
         for slaveFile in slaveFiles :
-            print("Using slave file %s" %slaveFile)
-            fStartupSeq.write("WHDload "+slaveFile+" Preload\n")
-            
-        fStartupSeq.write("exitemu\n")
+            if gotAddedParams :
+                addedParams = open(customLaunch,"r").readlines()[0].rstrip('\n\r ')
+                print("Using slave file %s with custom params %s" %(slaveFile,addedParams))
+                fStartupSeq.write("WHDload "+slaveFile+" Preload "+addedParams+"\n")
+            else :
+                print("Using slave file %s" %slaveFile)
+                fStartupSeq.write("WHDload "+slaveFile+" Preload\n")
+                
+        # comment for now
+        # fStartupSeq.write("exitemu\n")
     finally :
         fStartupSeq.close()
-        
-    # TODO Tweak uae file
     
 def generateHardDriveConf(fUaeConfig) :
     fUaeConfig.save("rtg_nocustom","true")
@@ -90,11 +98,10 @@ def generateHardDriveConf(fUaeConfig) :
     fUaeConfig.save("uaehf0","dir,rw,DH0:DH0:"+mountPointWHDL+"/,0")
     
 def handleBackup(fullName,romFolder,gameName,amigaHardware) :
-    # ------------ WHDL structure Files before backup of backups ------------
+    # ------------ clean WHDL structure Files before backup of backups ------------
     shutil.rmtree(os.path.join(mountPointWHDL,'S'))
     shutil.rmtree(os.path.join(mountPointWHDL,'C'))
     shutil.rmtree(os.path.join(mountPointWHDL,'Devs'))
-    os.remove(os.path.join(mountPointWHDL,"uaeconfig.uae"))
     
     # ------------ detect changes in remaining games files for backuping saves ------------
     print("Backup changed files from %s to %s" %(mountPointWHDL,os.path.join(romFolder,gameName)))
